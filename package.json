@@ -2,14 +2,13 @@
   "name": "futureyou",
   "version": "1.0.0",
   "main": "index.ts",
- "scripts": {
+"scripts": {
   "start": "expo start",
   "android": "expo start --android",
   "ios": "expo start --ios",
   "web": "expo start --web",
   "build": "expo export:web"
-}
-  },
+},
   "dependencies": {
     "@expo/ngrok": "^4.1.0",
     "@react-native-async-storage/async-storage": "2.2.0",
