@@ -165,10 +165,11 @@ function fetchAudioBase64(voiceId: string, text: string): Promise<string> {
         text,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
-          stability: 0.72,
-          similarity_boost: 0.78,
-          style: 0.35,
+          stability: 0.40,
+          similarity_boost: 0.75,
+          style: 0.25,
           use_speaker_boost: false,
+          speed: 0.88,
         },
       })
     );

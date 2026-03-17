@@ -57,7 +57,13 @@ RULES:
 - This should feel like a film of THEIR specific life, not generic motivation
 - End mid-scene — leave them wanting more. The last sentence should feel like it's building toward something incredible but doesn't resolve
 - Write 3-4 short paragraphs, each 2-3 sentences
-- Flowing sentences with natural speech rhythm`;
+- Flowing sentences with natural speech rhythm
+
+PACING (critical — this is read aloud by TTS):
+- Use "..." (ellipsis) between phrases to create gentle breath pauses. Example: "You are here... and everything is exactly as you designed it."
+- Use em dashes (—) for mid-sentence breath. Example: "The air is warm — and you feel it in your chest."
+- Do NOT rush. Leave space between emotional beats. Let each image land before the next one arrives.
+- The listener should feel every single emotion. This is a luxury meditation experience, not a narration.`;
 }
 
 export default function TasteScreen({ onComplete }: TasteScreenProps) {

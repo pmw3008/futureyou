@@ -12,7 +12,7 @@ export interface Guide {
 export const GUIDES: Guide[] = [
   {
     id: "jules",
-    voiceId: "xfLYiMzfmLMjop9oyffg",
+    voiceId: "Wu8LvXIxRX001LOMLGOn",
     label: "Jules",
     subtitle: "Soft Guide",
     provider: "elevenlabs",

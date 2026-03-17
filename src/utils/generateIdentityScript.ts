@@ -43,8 +43,16 @@ FORMAT:
 - Build through sensory identity anchoring — textures, sounds, temperatures, physical sensations in their specific environment
 - End with a visceral activation: they should feel it in their chest
 
+PACING & BREATH:
+- This script is read aloud by a TTS voice. You MUST build in natural pauses.
+- Use "..." (ellipsis) between phrases to create gentle pauses where the listener can FEEL the words land. Example: "You are exactly who you said you are... and today, you move from that knowing."
+- Use em dashes (—) for mid-sentence breath pauses. Example: "The air is cool — and your body is ready."
+- Do NOT overstimulate. Leave space between emotional beats. Let each image settle before the next one arrives.
+- The listener should feel every single emotion. Rushing kills the experience.
+- Think luxury meditation app — not motivational speech. Slow. Intimate. Spacious.
+
 TONE:
-- Like a warm, intimate guide speaking directly to them — immersive and personal
+- Like the listener's future self speaking to them — warm, knowing, intimate
 - Cinematic intimacy — not motivational poster energy
 - Specific, grounded, physical — not abstract or philosophical
 - This script should make them emotional because of how SEEN they feel
@@ -73,7 +81,16 @@ FORMAT:
 - Move through release, forgiveness, and identity anchoring — each tied to their specific world
 - End with deep rest: they should feel safe and held, with their identity settling into their bones
 
+PACING & BREATH:
+- This script is read aloud by a TTS voice. You MUST build in natural pauses.
+- Use "..." (ellipsis) between phrases to create gentle pauses where the listener sinks deeper. Example: "You are safe here... the person you are does not disappear in sleep... it deepens."
+- Use em dashes (—) for soft mid-sentence breath pauses. Example: "The weight of your shoulders — releasing now."
+- Leave generous space between emotional beats. Each image should dissolve slowly into the next.
+- Do NOT overstimulate. This is sleep conditioning. The pacing should feel like warm honey.
+- The listener should feel every single emotion. Let the silence between words carry as much meaning as the words themselves.
+
 TONE:
+- Like the listener's future self speaking to them — warm, tender, safe
 - Like warm honey — slow, thick, deliberate
 - Permission-giving — "you are allowed to rest"
 - Affirming who they are, not what they did
@@ -169,46 +186,46 @@ function getFallbackMorningScript(profile: UserProfile): string {
   const identity = profile.identityStatement || "a powerful, intentional person";
   const dreamLife = profile.idealDay || "a life of clarity, focus, and intention";
 
-  return `The room is still dark, but you are already awake. Not from an alarm — from something deeper. Your body knows what today holds, and it is ready.
+  return `The room is still dark... but you are already awake. Not from an alarm — from something deeper. Your body knows what today holds... and it is ready.
 
-You sit up slowly. Your spine straightens. The air is cool on your skin, and there is a quiet electricity in your chest. You are ${identity}. Not in theory. In practice. In the way you carry yourself through every room you enter.
+You sit up slowly. Your spine straightens... the air is cool on your skin, and there is a quiet electricity in your chest. You are ${identity}. Not in theory... in practice. In the way you carry yourself through every room you enter.
 
-Picture it clearly — ${dreamLife}. You are already inside this life. The morning light falls across your space exactly how you designed it. Every detail reflects the choices you have made.
+Picture it clearly — ${dreamLife}. You are already inside this life... the morning light falls across your space exactly how you designed it. Every detail reflects the choices you have made.
 
-There is no rush. You move through this morning with the kind of calm that only comes from certainty. You know who you are. You know what you are building. You know exactly where you are going.
+There is no rush... you move through this morning with the kind of calm that only comes from certainty. You know who you are. You know what you are building... you know exactly where you are going.
 
-Your hands are steady. Your thoughts are clear. The noise of the world has no hold on you today, because you have already decided who you are. You are ${identity}, and that truth does not waver.
+Your hands are steady... your thoughts are clear. The noise of the world has no hold on you today — because you have already decided who you are. You are ${identity}... and that truth does not waver.
 
-Feel it in your chest right now — that deep, unshakable knowing. This is not hope. This is recognition. You are already living as the person you declared yourself to be.
+Feel it in your chest right now — that deep, unshakable knowing... this is not hope. This is recognition. You are already living as the person you declared yourself to be.
 
-The people who encounter you today will feel it. Not because you announce it, but because it radiates from how you move, how you listen, how you hold silence.
+The people who encounter you today will feel it... not because you announce it — but because it radiates from how you move, how you listen... how you hold silence.
 
-Stand up. Step into this day as exactly who you are. Not becoming. Being. Right now.`;
+Stand up... step into this day as exactly who you are. Not becoming... being. Right now.`;
 }
 
 function getFallbackNightScript(profile: UserProfile): string {
   const identity = profile.identityStatement || "someone who deserves deep rest";
   const dreamLife = profile.idealDay || "a life of peace, purpose, and deep fulfillment";
 
-  return `The world outside has gone quiet. The sounds of the day are fading — the conversations, the decisions, the motion of everything you carried. Let it all settle now, like dust in still air.
+  return `The world outside has gone quiet... the sounds of the day are fading — the conversations, the decisions, the motion of everything you carried. Let it all settle now... like dust in still air.
 
-Your body is sinking into this bed, and you are letting it. Feel the weight of your shoulders releasing, feel the tension in your jaw softening, feel the muscles behind your eyes finally letting go. You earned this stillness.
+Your body is sinking into this bed... and you are letting it. Feel the weight of your shoulders — releasing. Feel the tension in your jaw — softening... feel the muscles behind your eyes finally letting go. You earned this stillness.
 
-Today, you showed up as ${identity}. Not perfectly — but honestly. And that honesty is more powerful than perfection has ever been. You chose yourself today, and that choice echoes into everything.
+Today, you showed up as ${identity}... not perfectly — but honestly. And that honesty is more powerful than perfection has ever been. You chose yourself today... and that choice echoes into everything.
 
-Let go of anything that was not yours to carry. Words that missed the mark, moments that felt heavy — release them now. They do not define you. They do not follow you into this rest.
+Let go of anything that was not yours to carry... words that missed the mark, moments that felt heavy — release them now. They do not define you. They do not follow you into this rest.
 
-Picture the life you are already living — ${dreamLife}. See the evening version of it. The quiet after everything is done. The warm light. The feeling of enough. You are already inside this life.
+Picture the life you are already living — ${dreamLife}... see the evening version of it. The quiet after everything is done... the warm light. The feeling of enough. You are already inside this life.
 
-Your body knows how to restore itself. Every cell is working for you right now, rebuilding, recharging, preparing you for tomorrow. You do not need to manage this. Trust it.
+Your body knows how to restore itself... every cell is working for you right now — rebuilding, recharging, preparing you for tomorrow. You do not need to manage this... trust it.
 
-You are safe here. The person you are does not disappear in sleep — it deepens. You are ${identity}, and this truth settles deeper into your bones with every breath.
+You are safe here... the person you are does not disappear in sleep — it deepens. You are ${identity}... and this truth settles deeper into your bones with every breath.
 
-There is nothing left to do tonight. Nothing to solve, nothing to fix, nothing to figure out. You are allowed to rest completely, without guilt, without reservation.
+There is nothing left to do tonight... nothing to solve, nothing to fix, nothing to figure out. You are allowed to rest completely... without guilt... without reservation.
 
-Feel yourself drifting now. The boundary between waking and sleeping is blurring, and you are letting it happen. Your body is warm. Your mind is quiet. Your heart is steady.
+Feel yourself drifting now... the boundary between waking and sleeping is blurring, and you are letting it happen. Your body is warm... your mind is quiet... your heart is steady.
 
-As you fall asleep, know this — you are exactly who you said you are. Tomorrow, you rise as the same person. Rooted. Clear. Whole. But right now, you rest.
+As you fall asleep, know this — you are exactly who you said you are... tomorrow, you rise as the same person. Rooted. Clear. Whole... but right now, you rest.
 
-Sleep now. You are held.`;
+Sleep now... you are held.`;
 }
