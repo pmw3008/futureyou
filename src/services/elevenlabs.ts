@@ -39,7 +39,7 @@ function hashText(text: string): string {
 }
 
 // Bump this when voice_settings change to invalidate cached audio
-const VOICE_SETTINGS_VERSION = 4;
+const VOICE_SETTINGS_VERSION = 5;
 
 function getCacheKey(voiceId: string, text: string): string {
   return `v${VOICE_SETTINGS_VERSION}:${voiceId}:${hashText(text)}`;

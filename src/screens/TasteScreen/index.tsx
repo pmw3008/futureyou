@@ -358,11 +358,11 @@ function getFallbackTasteScript(name: string, identity: string, dreamLife: strin
   const id = identity || "someone who moves with quiet power and certainty";
   const dream = dreamLife || "freedom, abundance, and deep creative fulfillment";
 
-  return `The morning light pours through floor-to-ceiling windows, and you are already awake. Not from an alarm. From that quiet internal knowing that today matters. Your body feels strong, rested, aligned. The space around you reflects exactly who you have become: ${id}.
+  return `The morning light pours through floor-to-ceiling windows... and you are already awake. Not from an alarm — from that quiet internal knowing that today matters. Your body feels strong... rested... aligned. The space around you reflects exactly who you have become — ${id}.
 
-You move through your morning with the kind of calm that only comes from knowing you are exactly where you are meant to be. This is what ${dream} actually feels like — not as a fantasy, but as the texture of an ordinary Tuesday in your life. The coffee is perfect. The silence is chosen. Every detail whispers back your identity.
+You move through your morning with the kind of calm that only comes from knowing... you are exactly where you are meant to be. This is what ${dream} actually feels like — not as a fantasy, but as the texture of an ordinary Tuesday in your life. The coffee is perfect... the silence is chosen. Every detail whispers back your identity.
 
-Your phone lights up — not with noise, but with evidence. People reaching out. Opportunities arriving. They see what you already know about yourself. There is a gravity to you now, a magnetism that you did not manufacture. It grew from the inside out, from every morning you chose to show up as this version of yourself...`;
+Your phone lights up — not with noise... but with evidence. People reaching out. Opportunities arriving... they see what you already know about yourself. There is a gravity to you now — a magnetism that you did not manufacture. It grew from the inside out... from every morning you chose to show up as this version of yourself...`;
 }
 
 // ─── Styles ───────────────────────────────────────────────────
