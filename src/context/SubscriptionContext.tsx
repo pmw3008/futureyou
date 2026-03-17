@@ -151,7 +151,13 @@ export function SubscriptionProvider({
           } catch {}
         }
 
-        // Configure RevenueCat
+        // Skip RevenueCat initialization on web — it's not supported
+        if (Platform.OS === "web") {
+          setIsLoading(false);
+          return;
+        }
+
+        // Configure RevenueCat (mobile only)
         Purchases.setLogLevel(LOG_LEVEL.ERROR);
 
         // API keys should be set in app.config.js extra
@@ -193,6 +199,10 @@ export function SubscriptionProvider({
 
   const purchasePackage = useCallback(
     async (pkg: PurchasesPackage): Promise<boolean> => {
+      if (Platform.OS === "web") {
+        console.warn("[Subscription] Purchase not supported on web");
+        return false;
+      }
       try {
         const { customerInfo } = await Purchases.purchasePackage(pkg);
         const state = extractSubscriptionState(customerInfo);
@@ -209,6 +219,10 @@ export function SubscriptionProvider({
   );
 
   const restorePurchases = useCallback(async (): Promise<boolean> => {
+    if (Platform.OS === "web") {
+      console.warn("[Subscription] Restore purchases not supported on web");
+      return false;
+    }
     try {
       const customerInfo = await Purchases.restorePurchases();
       const state = extractSubscriptionState(customerInfo);

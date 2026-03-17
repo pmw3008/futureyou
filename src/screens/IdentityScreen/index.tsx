@@ -3,6 +3,7 @@ import {
   View,
   Text,
   TextInput,
+  Pressable,
   ScrollView,
   StyleSheet,
   KeyboardAvoidingView,
@@ -10,8 +11,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+import * as Haptics from "expo-haptics";
 import { colors, spacing, radius, typography, fonts } from "../../theme";
 import { useUserProfile } from "../../context/UserProfileContext";
+import { useSubscription } from "../../context/SubscriptionContext";
 import { GuideSelector } from "../../components/GuideSelector";
 import { VisionCard } from "../../components/VisionCard";
 
@@ -79,6 +83,8 @@ function PromptCard({
 
 export default function IdentityScreen() {
   const { profile, updateProfile, setSelectedGuide } = useUserProfile();
+  const { isPremium, isTrialing } = useSubscription();
+  const navigation = useNavigation<any>();
   const [nameText, setNameText] = useState(profile.name);
 
   const saveField = useCallback(
@@ -168,6 +174,36 @@ export default function IdentityScreen() {
 
             {/* Vision Card */}
             <VisionCard profile={profile} />
+
+            {/* Subscription Link */}
+            <View style={s.subscriptionSection}>
+              <Pressable
+                onPress={() => {
+                  if (Platform.OS !== "web") {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                  }
+                  navigation.navigate("Subscription");
+                }}
+                style={({ pressed }) => [
+                  s.subscriptionBtn,
+                  pressed && s.subscriptionBtnPressed,
+                ]}
+              >
+                <View style={s.subscriptionBtnInner}>
+                  <Text style={s.subscriptionBtnText}>Manage Subscription</Text>
+                  <View style={s.subscriptionBadge}>
+                    <Text style={s.subscriptionBadgeText}>
+                      {isPremium
+                        ? isTrialing
+                          ? "TRIAL"
+                          : "ACTIVE"
+                        : "FREE"}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={s.subscriptionArrow}>{">"}</Text>
+              </Pressable>
+            </View>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -282,5 +318,57 @@ const s = StyleSheet.create({
     paddingTop: spacing["2xl"],
     borderTopWidth: 1,
     borderTopColor: "rgba(255,138,43,0.08)",
+  },
+
+  /* Subscription */
+  subscriptionSection: {
+    marginTop: spacing["2xl"],
+    paddingTop: spacing["2xl"],
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,138,43,0.08)",
+  },
+  subscriptionBtn: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderRadius: radius.large,
+    padding: spacing.xl,
+    borderWidth: 1,
+    borderColor: "rgba(255,138,43,0.08)",
+    backgroundColor: "rgba(13,9,6,0.8)",
+  },
+  subscriptionBtnPressed: {
+    backgroundColor: "rgba(255,138,43,0.04)",
+    borderColor: "rgba(255,138,43,0.15)",
+  },
+  subscriptionBtnInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+  },
+  subscriptionBtnText: {
+    fontFamily: fonts.headline,
+    fontSize: 15,
+    color: "#F5EEE4",
+    letterSpacing: 0.2,
+  },
+  subscriptionBadge: {
+    paddingVertical: 2,
+    paddingHorizontal: spacing.sm + 2,
+    borderRadius: radius.pill,
+    backgroundColor: "rgba(255,138,43,0.12)",
+    borderWidth: 1,
+    borderColor: "rgba(255,138,43,0.2)",
+  },
+  subscriptionBadgeText: {
+    fontFamily: fonts.headline,
+    fontSize: 9,
+    letterSpacing: 1,
+    color: colors.primary,
+  },
+  subscriptionArrow: {
+    fontFamily: fonts.headline,
+    fontSize: 16,
+    color: "rgba(255,240,225,0.3)",
   },
 });

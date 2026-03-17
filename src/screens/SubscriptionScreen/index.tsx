@@ -16,17 +16,21 @@ import {
   Alert,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native";
 import * as Haptics from "expo-haptics";
 import { ScreenContainer } from "../../components";
 import { colors, spacing, radius, fonts } from "../../theme";
 import { useSubscription } from "../../context/SubscriptionContext";
 
 export default function SubscriptionScreen() {
+  const navigation = useNavigation();
   const { isPremium, isTrialing, plan, status, expirationDate, restorePurchases } =
     useSubscription();
 
   const handleManage = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
     if (Platform.OS === "ios") {
       Linking.openURL("https://apps.apple.com/account/subscriptions");
     } else {
@@ -37,11 +41,15 @@ export default function SubscriptionScreen() {
   }, []);
 
   const handleRestore = useCallback(async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
     try {
       const success = await restorePurchases();
       if (success) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        }
         Alert.alert("Restored", "Your subscription has been restored.");
       } else {
         Alert.alert(
@@ -88,6 +96,21 @@ export default function SubscriptionScreen() {
 
   return (
     <ScreenContainer>
+      {/* Back button */}
+      <Pressable
+        onPress={() => {
+          if (Platform.OS !== "web") {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+          }
+          navigation.goBack();
+        }}
+        style={({ pressed }) => [s.backBtn, pressed && s.backBtnPressed]}
+        hitSlop={12}
+      >
+        <Text style={s.backArrow}>{"‹"}</Text>
+        <Text style={s.backText}>Identity</Text>
+      </Pressable>
+
       <View style={s.header}>
         <Text style={s.title}>Subscription</Text>
         <Text style={s.subtitle}>Manage your FutureYou premium plan</Text>
@@ -175,6 +198,30 @@ export default function SubscriptionScreen() {
 // ─── Styles ───────────────────────────────────────────────────
 
 const s = StyleSheet.create({
+  backBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginBottom: spacing.xl,
+    alignSelf: "flex-start",
+    paddingVertical: spacing.sm,
+    paddingRight: spacing.md,
+  },
+  backBtnPressed: {
+    opacity: 0.6,
+  },
+  backArrow: {
+    fontFamily: fonts.headline,
+    fontSize: 28,
+    color: colors.primary,
+    lineHeight: 28,
+  },
+  backText: {
+    fontFamily: fonts.headline,
+    fontSize: 15,
+    color: colors.primary,
+    letterSpacing: 0.2,
+  },
   header: {
     marginBottom: spacing["2xl"],
   },

@@ -1,13 +1,25 @@
 import React from "react";
 import { Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DailyIdentityScreen from "../screens/DailyIdentityScreen";
 import VisualizationGeneratorScreen from "../screens/VisualizationGeneratorScreen";
 import EvidenceScreen from "../screens/EvidenceScreen";
 import IdentityScreen from "../screens/IdentityScreen";
+import SubscriptionScreen from "../screens/SubscriptionScreen";
 import { colors, fonts } from "../theme";
 
 const Tab = createBottomTabNavigator();
+const IdentityStack = createNativeStackNavigator();
+
+function IdentityStackNavigator() {
+  return (
+    <IdentityStack.Navigator screenOptions={{ headerShown: false }}>
+      <IdentityStack.Screen name="IdentityMain" component={IdentityScreen} />
+      <IdentityStack.Screen name="Subscription" component={SubscriptionScreen} />
+    </IdentityStack.Navigator>
+  );
+}
 
 export default function TabNavigator() {
   return (
@@ -35,7 +47,7 @@ export default function TabNavigator() {
       <Tab.Screen name="Ritual" component={DailyIdentityScreen} />
       <Tab.Screen name="Visualize" component={VisualizationGeneratorScreen} />
       <Tab.Screen name="Proof" component={EvidenceScreen} />
-      <Tab.Screen name="Identity" component={IdentityScreen} />
+      <Tab.Screen name="Identity" component={IdentityStackNavigator} />
     </Tab.Navigator>
   );
 }

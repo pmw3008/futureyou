@@ -6,6 +6,7 @@ import {
   TextInput,
   StyleSheet,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
@@ -123,7 +124,9 @@ export default function VisualizationGeneratorScreen() {
     const input = prompt.trim();
     if (!input) return;
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     setIsGenerating(true);
     setError(null);
     setGeneratedScript(null);
@@ -174,14 +177,18 @@ export default function VisualizationGeneratorScreen() {
   }, [prompt, profile]);
 
   const handlePlay = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     if (generatedScript) {
       speechPlayer.play(generatedScript);
     }
   }, [generatedScript, speechPlayer]);
 
   const handleStop = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
     speechPlayer.stop();
   }, [speechPlayer]);
 
@@ -194,20 +201,26 @@ export default function VisualizationGeneratorScreen() {
   }, [speechPlayer]);
 
   const handleExamplePress = useCallback((example: string) => {
-    Haptics.selectionAsync();
+    if (Platform.OS !== "web") {
+      Haptics.selectionAsync().catch(() => {});
+    }
     setPrompt(example);
   }, []);
 
   const handleSave = useCallback(() => {
     if (activePrompt && generatedScript) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (Platform.OS !== "web") {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      }
       saveVisualization(activePrompt, generatedScript);
     }
   }, [activePrompt, generatedScript, saveVisualization]);
 
   const handleUnsave = useCallback(
     (id: string) => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      }
       removeVisualization(id);
     },
     [removeVisualization]
@@ -216,7 +229,9 @@ export default function VisualizationGeneratorScreen() {
   const handleOpenSaved = useCallback(
     (saved: SavedVisualization) => {
       speechPlayer.stop();
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+      }
       setViewingSaved(saved);
       setActivePrompt(saved.prompt);
       setGeneratedScript(saved.script);

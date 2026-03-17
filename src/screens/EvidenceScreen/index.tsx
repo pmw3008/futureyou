@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Alert,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
@@ -46,7 +47,9 @@ function TimelineEntry({
   const [showDelete, setShowDelete] = useState(false);
 
   const handleLongPress = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     setShowDelete(true);
   }, []);
 
@@ -60,7 +63,9 @@ function TimelineEntry({
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            if (Platform.OS !== "web") {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+            }
             onDelete(entry.id);
           },
         },
@@ -172,7 +177,9 @@ export default function EvidenceScreen() {
     const text = body.trim();
     if (!text) return;
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
 
     const entry: Omit<EvidenceEntry, "id" | "date"> = {
       type: "identity-proof",
@@ -203,7 +210,9 @@ export default function EvidenceScreen() {
 
   const handleSaveAffirmation = () => {
     if (!generatedAffirmation) return;
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (Platform.OS !== "web") {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    }
 
     const existing = customLoops.find((l) => l.title === "From My Evidence");
     if (existing) {
@@ -222,7 +231,9 @@ export default function EvidenceScreen() {
   };
 
   const handlePromptChip = useCallback((starter: string) => {
-    Haptics.selectionAsync();
+    if (Platform.OS !== "web") {
+      Haptics.selectionAsync().catch(() => {});
+    }
     setBody(starter);
   }, []);
 

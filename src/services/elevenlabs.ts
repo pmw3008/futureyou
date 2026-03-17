@@ -11,6 +11,7 @@
  * - Audio mode set once, not per-call
  */
 
+import { Platform } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system/legacy";
 import Constants from "expo-constants";
@@ -38,7 +39,7 @@ function hashText(text: string): string {
 }
 
 // Bump this when voice_settings change to invalidate cached audio
-const VOICE_SETTINGS_VERSION = 3;
+const VOICE_SETTINGS_VERSION = 4;
 
 function getCacheKey(voiceId: string, text: string): string {
   return `v${VOICE_SETTINGS_VERSION}:${voiceId}:${hashText(text)}`;
@@ -49,7 +50,10 @@ function evictOldestIfNeeded(): void {
     const firstKey = _audioCache.keys().next().value;
     if (firstKey) {
       const path = _audioCache.get(firstKey);
-      if (path) FileSystem.deleteAsync(path, { idempotent: true }).catch(() => {});
+      // FileSystem is native-only; skip deletion on web
+      if (path && Platform.OS !== "web") {
+        FileSystem.deleteAsync(path, { idempotent: true }).catch(() => {});
+      }
       _audioCache.delete(firstKey);
     }
   }
@@ -70,6 +74,10 @@ export async function precacheAudio(
   texts: string[]
 ): Promise<void> {
   if (!API_KEY || !voiceId) return;
+
+  // Caching is native-only; skip on web
+  if (Platform.OS === "web") return;
+
   const uncached = texts.filter((t) => !_audioCache.has(getCacheKey(voiceId, t)));
   if (uncached.length === 0) return;
 
@@ -103,6 +111,13 @@ export async function precacheAudio(
  */
 async function ensureAudioMode(): Promise<void> {
   if (_audioModeSet) return;
+
+  // Audio mode configuration is native-only; skip on web
+  if (Platform.OS === "web") {
+    _audioModeSet = true;
+    return;
+  }
+
   try {
     await Audio.setAudioModeAsync({
       playsInSilentModeIOS: true,
@@ -150,10 +165,10 @@ function fetchAudioBase64(voiceId: string, text: string): Promise<string> {
         text,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
-          stability: 0.42,
-          similarity_boost: 0.82,
-          style: 0.68,
-          use_speaker_boost: true,
+          stability: 0.72,
+          similarity_boost: 0.78,
+          style: 0.35,
+          use_speaker_boost: false,
         },
       })
     );
@@ -175,6 +190,13 @@ export async function speakWithElevenLabs(options: {
 
   if (!API_KEY) {
     console.warn("[ElevenLabs] No API key configured");
+    return false;
+  }
+
+  // Audio playback is native-only; skip on web
+  if (Platform.OS === "web") {
+    console.info("[ElevenLabs] Audio playback not supported on web");
+    onDone?.();
     return false;
   }
 
@@ -259,7 +281,10 @@ export function clearCacheForVoice(voiceId: string): void {
   const keysToDelete: string[] = [];
   _audioCache.forEach((_path, key) => {
     if (key.startsWith(voiceId)) {
-      FileSystem.deleteAsync(_path, { idempotent: true }).catch(() => {});
+      // FileSystem is native-only; skip deletion on web
+      if (Platform.OS !== "web") {
+        FileSystem.deleteAsync(_path, { idempotent: true }).catch(() => {});
+      }
       keysToDelete.push(key);
     }
   });

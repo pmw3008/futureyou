@@ -245,8 +245,23 @@ export default function DailyIdentityScreen() {
 
         // Only use cached scripts if same day AND same profile
         if (storedDate === todayStr && storedHash === currentHash) {
-          if (storedMorning) setMorningScript(storedMorning);
-          if (storedNight) setNightScript(storedNight);
+          if (storedMorning) {
+            setMorningScript(storedMorning);
+            // Pre-cache TTS audio from stored scripts for instant playback
+            if (guideId) {
+              const voiceId = getGuideVoiceId(guideId);
+              const paragraphs = storedMorning.split(/\n\n+/).map((p: string) => p.trim()).filter((p: string) => p.length > 0);
+              precacheAudio(voiceId, paragraphs);
+            }
+          }
+          if (storedNight) {
+            setNightScript(storedNight);
+            if (guideId) {
+              const voiceId = getGuideVoiceId(guideId);
+              const paragraphs = storedNight.split(/\n\n+/).map((p: string) => p.trim()).filter((p: string) => p.length > 0);
+              precacheAudio(voiceId, paragraphs);
+            }
+          }
         }
       } catch {}
       initialLoadDone.current = true;
@@ -305,13 +320,19 @@ export default function DailyIdentityScreen() {
         AsyncStorage.setItem(SCRIPT_DATE_KEY, todayStr),
         AsyncStorage.setItem(SCRIPT_PROFILE_HASH_KEY, hash),
       ]);
+      // Pre-cache TTS audio so playback starts instantly when user taps play
+      if (guideId) {
+        const voiceId = getGuideVoiceId(guideId);
+        const paragraphs = script.split(/\n\n+/).map((p: string) => p.trim()).filter((p: string) => p.length > 0);
+        precacheAudio(voiceId, paragraphs);
+      }
     } catch (err) {
       console.warn("[DailyIdentity] Morning generation error:", err);
     } finally {
       setLoadingMorning(false);
       generatingMorning.current = false;
     }
-  }, [profile]);
+  }, [profile, guideId]);
 
   const generateNight = useCallback(async () => {
     if (generatingNight.current) return;
@@ -327,13 +348,19 @@ export default function DailyIdentityScreen() {
         AsyncStorage.setItem(SCRIPT_DATE_KEY, todayStr),
         AsyncStorage.setItem(SCRIPT_PROFILE_HASH_KEY, hash),
       ]);
+      // Pre-cache TTS audio so playback starts instantly when user taps play
+      if (guideId) {
+        const voiceId = getGuideVoiceId(guideId);
+        const paragraphs = script.split(/\n\n+/).map((p: string) => p.trim()).filter((p: string) => p.length > 0);
+        precacheAudio(voiceId, paragraphs);
+      }
     } catch (err) {
       console.warn("[DailyIdentity] Night generation error:", err);
     } finally {
       setLoadingNight(false);
       generatingNight.current = false;
     }
-  }, [profile]);
+  }, [profile, guideId]);
 
   // Auto-generate scripts when they're null (after load or profile change)
   useEffect(() => {
@@ -358,7 +385,9 @@ export default function DailyIdentityScreen() {
   }, [affirmSpeech, morningSpeech, nightSpeech]);
 
   const handlePlayMorningAudio = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     if (isMorningPlaying) { stopAll(); if (!ritual.steps.visualization) completeStep("visualization"); return; }
     stopAll();
     if (!morningScript) { generateMorning(); return; }
@@ -367,7 +396,9 @@ export default function DailyIdentityScreen() {
   }, [isMorningPlaying, morningScript, morningSpeech, stopAll, generateMorning, startTracking, ritual.steps.visualization, completeStep]);
 
   const handlePlayRobotic = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     if (isRoboticPlaying) { stopAll(); if (!ritual.steps.affirmation) completeStep("affirmation"); return; }
     stopAll();
     trackingRef.current = startTracking();
@@ -375,7 +406,9 @@ export default function DailyIdentityScreen() {
   }, [isRoboticPlaying, roboticAffirmations, selectedDuration, affirmSpeech, stopAll, startTracking, ritual.steps.affirmation, completeStep]);
 
   const handlePlayNight = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     if (isNightPlaying) { stopAll(); return; }
     stopAll();
     if (!nightScript) { generateNight(); return; }
@@ -506,7 +539,7 @@ export default function DailyIdentityScreen() {
           {DURATION_OPTIONS.map((opt, i) => (
             <Pressable
               key={opt.label}
-              onPress={() => { Haptics.selectionAsync(); setSelectedDuration(i); AsyncStorage.setItem(DURATION_KEY, String(i)).catch(() => {}); }}
+              onPress={() => { if (Platform.OS !== "web") { Haptics.selectionAsync().catch(() => {}); } setSelectedDuration(i); AsyncStorage.setItem(DURATION_KEY, String(i)).catch(() => {}); }}
               style={[styles.durationChip, selectedDuration === i && styles.durationChipActive]}
             >
               <Text style={[styles.durationText, selectedDuration === i && styles.durationTextActive]}>{opt.label}</Text>
@@ -524,7 +557,7 @@ export default function DailyIdentityScreen() {
         )}
 
         {/* Edit */}
-        <Pressable onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowEditor(true); }} style={({ pressed }) => [styles.editBtn, pressed && styles.editBtnPressed]} hitSlop={8}>
+        <Pressable onPress={() => { if (Platform.OS !== "web") { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } setShowEditor(true); }} style={({ pressed }) => [styles.editBtn, pressed && styles.editBtnPressed]} hitSlop={8}>
           <Text style={styles.editBtnText}>Edit Affirmations</Text>
         </Pressable>
       </View>
@@ -546,7 +579,7 @@ export default function DailyIdentityScreen() {
               {EVIDENCE_TYPES.map((t) => (
                 <Pressable
                   key={t.id}
-                  onPress={() => { Haptics.selectionAsync(); setReflectionType(t.id); }}
+                  onPress={() => { if (Platform.OS !== "web") { Haptics.selectionAsync().catch(() => {}); } setReflectionType(t.id); }}
                   style={[styles.typeChip, reflectionType === t.id && styles.typeChipActive]}
                 >
                   <Text style={[styles.typeChipText, reflectionType === t.id && styles.typeChipTextActive]}>
@@ -580,7 +613,7 @@ export default function DailyIdentityScreen() {
           </View>
         ) : (
           <Pressable
-            onPress={() => gate(() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowReflection(true); }, "Night Reflection")}
+            onPress={() => gate(() => { if (Platform.OS !== "web") { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } setShowReflection(true); }, "Night Reflection")}
             style={({ pressed }) => [styles.secondaryCta, pressed && styles.ctaPressed]}
           >
             <Text style={styles.secondaryCtaText}>

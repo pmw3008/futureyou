@@ -14,3 +14,4 @@ export { default as CustomizeLoopScreen } from "./CustomizeLoopScreen";
 export { SplashEntryScreen } from "./SplashEntryScreen";
 export { default as PaywallScreen } from "./PaywallScreen";
 export { default as SubscriptionScreen } from "./SubscriptionScreen";
+export { default as TasteScreen } from "./TasteScreen";

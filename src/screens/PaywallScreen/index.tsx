@@ -16,6 +16,7 @@ import {
   Linking,
   Alert,
   ScrollView,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,11 +29,11 @@ interface PaywallScreenProps {
 }
 
 const FEATURES = [
-  "AI-powered morning & night visualizations",
-  "Personalized identity affirmation loops",
+  "Personalized morning & night visualizations",
+  "Subconscious identity programming loops",
   "Daily ritual system with streak tracking",
-  "Evidence journaling with AI affirmations",
-  "Shareable Future Self Vision card",
+  "Proof journaling — AI turns evidence into affirmations",
+  "Future Self Vision card you can share",
 ];
 
 type PlanOption = "weekly" | "annual";
@@ -44,7 +45,9 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
   const [isRestoring, setIsRestoring] = useState(false);
 
   const handlePurchase = useCallback(async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     setIsPurchasing(true);
 
     try {
@@ -60,7 +63,9 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
       if (pkg) {
         const success = await purchasePackage(pkg);
         if (success) {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          }
           onSuccess();
           return;
         }
@@ -78,13 +83,17 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
   }, [packages, selectedPlan, purchasePackage, onSuccess]);
 
   const handleRestore = useCallback(async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
     setIsRestoring(true);
 
     try {
       const success = await restorePurchases();
       if (success) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        }
         onSuccess();
       } else {
         Alert.alert(
@@ -130,9 +139,9 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
         >
           {/* Hero */}
           <View style={s.hero}>
-            <Text style={s.heroTitle}>Become who you{"\n"}were meant to be</Text>
+            <Text style={s.heroTitle}>Continue your{"\n"}daily ritual</Text>
             <Text style={s.heroSubtitle}>
-              Your identity transformation starts now
+              Unlock your full personalized identity transformation
             </Text>
           </View>
 
@@ -159,7 +168,9 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
             {/* Weekly */}
             <Pressable
               onPress={() => {
-                Haptics.selectionAsync();
+                if (Platform.OS !== "web") {
+                  Haptics.selectionAsync().catch(() => {});
+                }
                 setSelectedPlan("weekly");
               }}
               style={[
@@ -177,7 +188,9 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
             {/* Annual */}
             <Pressable
               onPress={() => {
-                Haptics.selectionAsync();
+                if (Platform.OS !== "web") {
+                  Haptics.selectionAsync().catch(() => {});
+                }
                 setSelectedPlan("annual");
               }}
               style={[
@@ -196,9 +209,9 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
                 />
               )}
               <Text style={s.planName}>Annual</Text>
-              <Text style={s.planPrice}>$29.99</Text>
+              <Text style={s.planPrice}>$59</Text>
               <Text style={s.planPeriod}>per year</Text>
-              <Text style={s.planWeekly}>$0.58/week</Text>
+              <Text style={s.planWeekly}>$1.13/week</Text>
               <Text style={s.planTrial}>3-day free trial</Text>
               <View style={s.bestValueBadge}>
                 <LinearGradient
@@ -207,7 +220,7 @@ export default function PaywallScreen({ onSuccess }: PaywallScreenProps) {
                   end={{ x: 1, y: 1 }}
                   style={StyleSheet.absoluteFillObject}
                 />
-                <Text style={s.bestValueText}>SAVE 90%</Text>
+                <Text style={s.bestValueText}>SAVE 81%</Text>
               </View>
             </Pressable>
           </View>

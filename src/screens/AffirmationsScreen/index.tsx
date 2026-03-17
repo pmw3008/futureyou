@@ -354,7 +354,9 @@ export default function AffirmationsScreen() {
   }, [affirmSpeech, morningSpeech, nightSpeech]);
 
   const handlePlayMorning = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     if (isMorningPlaying) {
       stopAll();
       if (!ritual.steps.affirmation) completeStep("affirmation");
@@ -367,7 +369,9 @@ export default function AffirmationsScreen() {
   }, [isMorningPlaying, morningScript, morningSpeech, stopAll, generateMorning, startTracking, ritual.steps.affirmation, completeStep]);
 
   const handlePlayRobotic = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     if (isRoboticPlaying) {
       stopAll();
       if (!ritual.steps.affirmation) completeStep("affirmation");
@@ -383,7 +387,9 @@ export default function AffirmationsScreen() {
   }, [isRoboticPlaying, roboticAffirmations, selectedDuration, affirmSpeech, stopAll, startTracking, ritual.steps.affirmation, completeStep]);
 
   const handlePlayNight = useCallback(() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     if (isNightPlaying) {
       stopAll();
       return;
@@ -395,7 +401,9 @@ export default function AffirmationsScreen() {
   }, [isNightPlaying, nightScript, nightSpeech, stopAll, generateNight, startTracking]);
 
   const handleDurationChange = useCallback((index: number) => {
-    Haptics.selectionAsync();
+    if (Platform.OS !== "web") {
+      Haptics.selectionAsync().catch(() => {});
+    }
     setSelectedDuration(index);
     AsyncStorage.setItem(DURATION_KEY, String(index)).catch(() => {});
   }, []);
@@ -450,7 +458,7 @@ export default function AffirmationsScreen() {
         )}
 
         {morningScript && !isMorningPlaying && (
-          <Pressable onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); generateMorning(); }} style={styles.regenerateBtn} hitSlop={8}>
+          <Pressable onPress={() => { if (Platform.OS !== "web") { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } generateMorning(); }} style={styles.regenerateBtn} hitSlop={8}>
             <Text style={styles.regenerateText}>Regenerate</Text>
           </Pressable>
         )}
@@ -512,7 +520,7 @@ export default function AffirmationsScreen() {
 
         {/* Edit button */}
         <Pressable
-          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowEditor(true); }}
+          onPress={() => { if (Platform.OS !== "web") { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } setShowEditor(true); }}
           style={({ pressed }) => [styles.editBtn, pressed && styles.editBtnPressed]}
           hitSlop={8}
         >
@@ -553,7 +561,7 @@ export default function AffirmationsScreen() {
         )}
 
         {nightScript && !isNightPlaying && (
-          <Pressable onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); generateNight(); }} style={styles.regenerateBtn} hitSlop={8}>
+          <Pressable onPress={() => { if (Platform.OS !== "web") { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); } generateNight(); }} style={styles.regenerateBtn} hitSlop={8}>
             <Text style={styles.regenerateText}>Regenerate</Text>
           </Pressable>
         )}

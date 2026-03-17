@@ -14,12 +14,39 @@ import {
   StyleSheet,
   ActivityIndicator,
   Alert,
+  Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  SafeAreaFrameContext,
+  SafeAreaView,
+} from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { colors, spacing, radius, fonts } from "../theme";
 import { useSubscription } from "../context/SubscriptionContext";
+
+/**
+ * Wraps Modal content with SafeAreaProvider.
+ * On web, Modals portal outside the React tree, losing provider context.
+ * We pre-seed the context with zero insets so useSafeAreaInsets() never throws.
+ */
+function ModalSafeAreaWrapper({ children }: { children: React.ReactNode }) {
+  if (Platform.OS === "web") {
+    return (
+      <SafeAreaInsetsContext.Provider value={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+        <SafeAreaFrameContext.Provider value={{ x: 0, y: 0, width: 0, height: 0 }}>
+          <SafeAreaProvider>
+            {children}
+          </SafeAreaProvider>
+        </SafeAreaFrameContext.Provider>
+      </SafeAreaInsetsContext.Provider>
+    );
+  }
+
+  return <SafeAreaProvider>{children}</SafeAreaProvider>;
+}
 
 interface PaywallModalProps {
   visible: boolean;
@@ -40,7 +67,9 @@ export function PaywallModal({
   const [isRestoring, setIsRestoring] = useState(false);
 
   const handlePurchase = useCallback(async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    }
     setIsPurchasing(true);
 
     try {
@@ -55,7 +84,9 @@ export function PaywallModal({
       if (pkg) {
         const success = await purchasePackage(pkg);
         if (success) {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          if (Platform.OS !== "web") {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          }
           onClose();
           return;
         }
@@ -73,13 +104,17 @@ export function PaywallModal({
   }, [packages, selectedPlan, purchasePackage, onClose]);
 
   const handleRestore = useCallback(async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
     setIsRestoring(true);
 
     try {
       const success = await restorePurchases();
       if (success) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (Platform.OS !== "web") {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        }
         onClose();
       } else {
         Alert.alert(
@@ -101,6 +136,7 @@ export function PaywallModal({
       presentationStyle="pageSheet"
       onRequestClose={onClose}
     >
+      <ModalSafeAreaWrapper>
       <View style={s.root}>
         <LinearGradient
           colors={["#0D0906", "#080504", "#000000"]}
@@ -126,7 +162,9 @@ export function PaywallModal({
             <View style={s.pricingRow}>
               <Pressable
                 onPress={() => {
-                  Haptics.selectionAsync();
+                  if (Platform.OS !== "web") {
+                    Haptics.selectionAsync().catch(() => {});
+                  }
                   setSelectedPlan("weekly");
                 }}
                 style={[
@@ -140,7 +178,9 @@ export function PaywallModal({
 
               <Pressable
                 onPress={() => {
-                  Haptics.selectionAsync();
+                  if (Platform.OS !== "web") {
+                    Haptics.selectionAsync().catch(() => {});
+                  }
                   setSelectedPlan("annual");
                 }}
                 style={[
@@ -157,8 +197,8 @@ export function PaywallModal({
                     style={StyleSheet.absoluteFillObject}
                   />
                 )}
-                <Text style={s.planPrice}>$29.99/yr</Text>
-                <Text style={s.planSavings}>Save 90%</Text>
+                <Text style={s.planPrice}>$59/yr</Text>
+                <Text style={s.planSavings}>Save 81%</Text>
                 <Text style={s.planLabel}>Best Value</Text>
               </Pressable>
             </View>
@@ -204,6 +244,7 @@ export function PaywallModal({
           </View>
         </SafeAreaView>
       </View>
+      </ModalSafeAreaWrapper>
     </Modal>
   );
 }
